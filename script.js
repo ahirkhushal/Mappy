@@ -43,7 +43,7 @@ if (navigator.geolocation)
     }
   );
 
-//added event handler for ser maker on submit form
+//added event handler for set marker on submit form
 form.addEventListener("submit", function (event) {
   event.preventDefault();
 
@@ -66,4 +66,10 @@ form.addEventListener("submit", function (event) {
     )
     .setPopupContent("workOut")
     .openPopup();
+});
+
+//added event handler for change options's of form's type section
+inputType.addEventListener("change", function () {
+  elevationdiv.classList.toggle("form__row--hidden");
+  cadencediv.classList.toggle("form__row--hidden");
 });
