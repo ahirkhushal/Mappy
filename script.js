@@ -8,10 +8,13 @@ const cadencediv = document.querySelector('.cadencediv');
 const elevation = document.querySelector('.form__input--elevation');
 const elevationdiv = document.querySelector('.elevationdiv');
 const inputType = document.querySelector('.form__input--type');
+const workoutsCOntainer = document.querySelector('.workouts');
 
 class workOut {
   date = new Date();
   id = (Date.now() + '').slice(-10);
+  clicks = 0;
+
   constructor(distance, duration, coords) {
     this.distance = distance;
     this.duration = duration;
@@ -36,6 +39,10 @@ class workOut {
     this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${
       months[this.date.getMonth() + 1]
     } ${this.date.getDay()}`;
+  }
+
+  click() {
+    this.clicks++;
   }
 }
 
@@ -71,6 +78,7 @@ class cycling extends workOut {
 
 class App {
   #map;
+  #mapzoom = 13;
   #mapEvent;
   #workouts = [];
   constructor() {
@@ -81,6 +89,7 @@ class App {
 
     //added event handler for change options's of form's type section
     inputType.addEventListener('change', this._toggleElevationField);
+    workoutsCOntainer.addEventListener('click', this._moveToPopUp.bind(this));
   }
 
   _getPosition() {
@@ -103,7 +112,7 @@ class App {
     const coords = [latitude, longitude];
 
     //render map from ecternal site
-    this.#map = L.map('map').setView(coords, 13);
+    this.#map = L.map('map').setView(coords, this.#mapzoom);
 
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution:
@@ -250,6 +259,26 @@ class App {
 </li> `;
 
     form.insertAdjacentHTML('afterend', html);
+  }
+
+  _moveToPopUp(evt) {
+    const workoutEl = evt.target.closest('.workout');
+
+    if (!workoutEl) return;
+
+    const WORKOUT = this.#workouts.find(
+      work => work.id === workoutEl.dataset.id
+    );
+
+    this.#map.setView(WORKOUT.coords, this.#mapzoom, {
+      animate: true,
+      pan: {
+        duration: 1,
+      },
+    });
+
+    //using the public interface
+    WORKOUT.click();
   }
 }
 
