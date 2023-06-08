@@ -82,12 +82,13 @@ class App {
   #mapEvent;
   #workouts = [];
   constructor() {
+    //get user's position
     this._getPosition();
 
-    //added event handler for set marker on submit form
+    //get data from local storage
+    this._getLocalStorage();
+    //added event handlers
     form.addEventListener('submit', this._newWorkout.bind(this));
-
-    //added event handler for change options's of form's type section
     inputType.addEventListener('change', this._toggleElevationField);
     workoutsCOntainer.addEventListener('click', this._moveToPopUp.bind(this));
   }
@@ -121,6 +122,10 @@ class App {
 
     //added event handler for render workout form
     this.#map.on('click', this._showForm.bind(this));
+
+    this.#workouts.forEach(work => {
+      this._renderWorkOutMarker(work);
+    });
   }
 
   _showForm(mapE) {
@@ -168,8 +173,6 @@ class App {
         return alert('you should enter positive number!!');
 
       workout = new Running(distances, durations, coords, cadences);
-
-      form;
     }
 
     if (type === 'cycling') {
@@ -194,6 +197,9 @@ class App {
 
     //clear form on submit
     this._hideForm();
+
+    // set local storage to all workout
+    this._setLocalStorage();
   }
 
   _renderWorkOutMarker(workout) {
@@ -278,7 +284,28 @@ class App {
     });
 
     //using the public interface
-    WORKOUT.click();
+    // WORKOUT.click();
+  }
+
+  _setLocalStorage() {
+    localStorage.setItem('workouts', JSON.stringify(this.#workouts));
+  }
+
+  _getLocalStorage() {
+    const LocalStorageData = JSON.parse(localStorage.getItem('workouts'));
+
+    if (!LocalStorageData) return;
+
+    this.#workouts = LocalStorageData;
+    this.#workouts.forEach(work => {
+      this._renderWorkOut(work);
+    });
+  }
+
+  //you can access this method from console only
+  reset() {
+    localStorage.removeItem('workouts');
+    location.reload();
   }
 }
 
