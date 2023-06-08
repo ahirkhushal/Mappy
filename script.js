@@ -13,7 +13,6 @@ const workoutsCOntainer = document.querySelector('.workouts');
 class workOut {
   date = new Date();
   id = (Date.now() + '').slice(-10);
-  clicks = 0;
 
   constructor(distance, duration, coords) {
     this.distance = distance;
@@ -39,10 +38,6 @@ class workOut {
     this.description = `${this.type[0].toUpperCase()}${this.type.slice(1)} on ${
       months[this.date.getMonth() + 1]
     } ${this.date.getDay()}`;
-  }
-
-  click() {
-    this.clicks++;
   }
 }
 
@@ -282,9 +277,6 @@ class App {
         duration: 1,
       },
     });
-
-    //using the public interface
-    // WORKOUT.click();
   }
 
   _setLocalStorage() {
